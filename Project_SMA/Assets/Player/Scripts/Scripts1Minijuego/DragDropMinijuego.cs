@@ -29,8 +29,10 @@ public class DragDropMinijuego : MonoBehaviour
 
     public void DropObject()
     {
-        float Distance = Vector3.Distance(objectToDrag.transform.position, objectDragToPos.transform.position);
+        if (isLocked) return;
 
+        float Distance = Vector3.Distance(objectToDrag.transform.position, objectDragToPos.transform.position);
+        
         if (Distance < dropDistance)
         {
             isLocked = true;
