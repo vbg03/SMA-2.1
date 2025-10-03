@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using System;
 
 public class DragDropManager : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class DragDropManager : MonoBehaviour
     private int figurasBloqueadas = 0;
 
     public bool completado = false;
+
+    // Evento estático para notificar que el minijuego terminó
+    public static event Action OnMinijuegoCompletado;
     void OnEnable()
     {
         // Suscripción al evento
@@ -60,6 +64,6 @@ public class DragDropManager : MonoBehaviour
         completado = true;
         botonContinuar.SetActive(true);
         botonVolver.SetActive(false);
-
+        OnMinijuegoCompletado?.Invoke();
     }
 }

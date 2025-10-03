@@ -1,11 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Collider))] // Obliga a que el objeto tenga un Collider
 public class Activar1Minijuego : MonoBehaviour
 {
     [Header("Referencias")]
-    public GameObject panelMinijuego1;           // El panel a mostrar
-    public DragDropManager dragDropManager;  // Arrastra aquí el objeto con el script DragDropManager
+    public GameObject panelMinijuego1;           // El panel del minijuego
+    public GameObject panelPlayerUI;           // El panel de los botones del jugador
+    public DragDropManager dragDropManager;      // Script que maneja el minijuego
+    public Button botonInteractuar;              // Botón en la UI para interactuar
+
+    private bool minijuegoTerminado = false;
 
     private void Reset()
     {
@@ -13,14 +18,58 @@ public class Activar1Minijuego : MonoBehaviour
         GetComponent<Collider>().isTrigger = true;
     }
 
+    private void OnEnable()
+    {
+        // Nos suscribimos al evento del minijuego
+        DragDropManager.OnMinijuegoCompletado += DesactivarBotonDefinitivo;
+    }
+
+    private void OnDisable()
+    {
+        // Nos desuscribimos para evitar errores
+        DragDropManager.OnMinijuegoCompletado -= DesactivarBotonDefinitivo;
+    }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) // Solo reacciona al jugador
+        if (other.CompareTag("Player") && !minijuegoTerminado)
         {
             if (dragDropManager != null && !dragDropManager.completado)
             {
-                panelMinijuego1.SetActive(true);
+                botonInteractuar.gameObject.SetActive(true);
+                botonInteractuar.onClick.AddListener(MostrarMinijuego);
             }
         }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && !minijuegoTerminado)
+        {
+            botonInteractuar.onClick.RemoveListener(MostrarMinijuego);
+            botonInteractuar.gameObject.SetActive(false);
+            panelPlayerUI.SetActive(true);
+
+        }
+    }
+
+    private void MostrarMinijuego()
+    {
+        panelMinijuego1.SetActive(true);
+        panelPlayerUI.SetActive(false);
+        // Aquí podrías notificar al DragDropManager que el minijuego inició
+        // ej: dragDropManager.IniciarMinijuego();
+    }
+
+    // Se llama automáticamente cuando el minijuego se completa
+    private void DesactivarBotonDefinitivo()
+    {
+        minijuegoTerminado = true;
+
+        // Oculta y limpia el botón
+        botonInteractuar.onClick.RemoveListener(MostrarMinijuego);
+        botonInteractuar.gameObject.SetActive(false);
+        panelPlayerUI.SetActive(false);
+
+        Debug.Log(" El minijuego ya terminó, botón desactivado permanentemente.");
     }
 }

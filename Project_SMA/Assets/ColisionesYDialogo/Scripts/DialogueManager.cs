@@ -9,6 +9,8 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private Button interacButton;
     [SerializeField] private GameObject textPanel;
     [SerializeField] private TextMeshProUGUI textLabel;
+    [SerializeField] private TextMeshProUGUI textName;
+        
 
     private List<string> dialogo = new List<string> ();
     private int index = -1;
@@ -38,6 +40,8 @@ public class DialogueManager : MonoBehaviour
             index = -1;
             inZone = true;
             interacButton.gameObject.SetActive (true);
+            textName.text = currentGata.elementName;
+
         }
     }
     private void OnTriggerExit(Collider other)
