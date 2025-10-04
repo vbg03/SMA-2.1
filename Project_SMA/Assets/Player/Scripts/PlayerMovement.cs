@@ -1,9 +1,5 @@
-//using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,28 +9,39 @@ public class PlayerMovement : MonoBehaviour
     public PlayerInputActions PlayerInputAction;
     public CharacterController characterController;
     public Animator animator;
-    public LayerMask whatIsGround; // Asigna el layer del suelo desde el Inspector
-    
+    public LayerMask whatIsGround;
+
     [Header("Estados del personaje")]
     public bool isFalling = false;
     public bool isMoving = false;
     public bool isMovementPressed = false;
     public bool isGrounded = true;
-    public Transform groundCheck;  // Un objeto vacÌo (Empty GameObject) que marque el punto desde el cual lanzamos el Raycast (ubicado en los pies del personaje)
+    public Transform groundCheck;
 
-    [Header("Direccion del personaje")]
+    [Header("Direcci√≥n del personaje")]
     private Vector2 currentMovementInput;
     private Vector3 currentMovement;
 
     [Header("Valores de movimiento")]
     public float walkMultiplier = 2.0f;
     public float rotationFactorPerFrame = 13.0f;
-    public float groundCheckDistance = 0.4f; // La distancia entre el personaje y el suelo para considerar que est· tocando el suelo
+    public float groundCheckDistance = 0.4f;
     public float gravityScale = -1.0f;
 
-    private float realMovementSpeed;
-    private float animMovementSpeed;
+    [Header("Animaci√≥n")]
+    public float vertDamp = 0.1f;
+    public float stateDamp = 0.1f;
 
+    private int hash_Vert  = Animator.StringToHash("Vert");
+    private int hash_State = Animator.StringToHash("State");
+    private int hash_isGrounded = Animator.StringToHash("isGrounded");
+    private int hash_isFalling  = Animator.StringToHash("isFalling");
+    private int hash_isMoving   = Animator.StringToHash("isMoving");
+
+    private float targetSpeed;
+    private float realMovementSpeed;
+    private float vertValue;
+    private float stateValue;
 
     private void Awake()
     {
@@ -42,103 +49,87 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
 
-        PlayerInputAction.PlayerBasicActions.Move.started += onMovementInput;
-        PlayerInputAction.PlayerBasicActions.Move.canceled += onMovementInput;
+        PlayerInputAction.PlayerBasicActions.Move.started   += onMovementInput;
         PlayerInputAction.PlayerBasicActions.Move.performed += onMovementInput;
+        PlayerInputAction.PlayerBasicActions.Move.canceled  += onMovementInput;
+
+        if (animator) animator.applyRootMotion = false;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        //handlAnimation();
         handleRotation();
         handleMovement();
         handleGravity();
+        handleAnimation();
     }
+
     void onMovementInput(InputAction.CallbackContext context)
     {
         currentMovementInput = context.ReadValue<Vector2>();
-
-        // Calcular si el jugador se esta moviendo o no
-        isMovementPressed = currentMovementInput.x != 0 || currentMovementInput.y != 0;
+        isMovementPressed = !Mathf.Approximately(currentMovementInput.x, 0f) ||
+                            !Mathf.Approximately(currentMovementInput.y, 0f);
         isMoving = isMovementPressed;
 
-        // Aplicar rotaciÛn isomÈtrica a la entrada
+        // Rotaci√≥n isom√©trica
         Matrix4x4 isoMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, 45, 0));
         Vector3 inputAsVector = new Vector3(currentMovementInput.x, 0, currentMovementInput.y);
         Vector3 rotatedInput = isoMatrix.MultiplyPoint3x4(inputAsVector);
 
-        // Asignar el movimiento a las variables de movimiento
-        currentMovement.x = rotatedInput.x * walkMultiplier;
-        currentMovement.z = rotatedInput.z * walkMultiplier;
+        targetSpeed = walkMultiplier;
+
+        currentMovement.x = rotatedInput.x * targetSpeed;
+        currentMovement.z = rotatedInput.z * targetSpeed;
     }
+
     void handleMovement()
     {
-        realMovementSpeed = currentMovement.magnitude;
-        if (!isMoving)
-        {
-            animMovementSpeed = 0.0f;
-            characterController.Move(currentMovement * Time.deltaTime);
-        }
-        else
-        {
-            characterController.Move(currentMovement * Time.deltaTime);
-            animMovementSpeed = (realMovementSpeed / walkMultiplier * 1.0f);
-        }
-
+        realMovementSpeed = new Vector3(currentMovement.x, 0f, currentMovement.z).magnitude;
+        characterController.Move(currentMovement * Time.deltaTime);
     }
+
     void handleRotation()
     {
-        Vector3 positionToLookAt;
-        positionToLookAt.x = currentMovement.x;
-        positionToLookAt.y = 0.0f;
-        positionToLookAt.z = currentMovement.z;
-
-        Quaternion currentRotation = transform.rotation;
-        if (isMovementPressed)
+        Vector3 positionToLookAt = new Vector3(currentMovement.x, 0.0f, currentMovement.z);
+        if (isMovementPressed && positionToLookAt.sqrMagnitude > 0.0001f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt);
-            transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
         }
     }
 
     void handleGravity()
     {
-        // Verificar si el personaje est· en contacto con el suelo usando CheckSphere
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, whatIsGround);
 
         if (isGrounded)
         {
-            // El jugador acaba de aterrizar
             isFalling = false;
-
-            // Resetea el movimiento en Y cuando toca el suelo
-            currentMovement.y = -2f;
+            if (currentMovement.y < 0f) currentMovement.y = -2f;
         }
         else
         {
-            // El jugador est· en el aire
             isFalling = true;
-
-            // Aplica la gravedad mientras est· en el aire
             currentMovement.y += gravityScale * Time.deltaTime;
         }
     }
-    void handlAnimation()
-    {
-        // Chequeo de condiciones de animaciÛn
-        animator.SetBool("isGrounded", isGrounded);
-        animator.SetBool("isFalling", isFalling);
-        animator.SetBool("isMoving", isMoving);
-        animator.SetFloat("Speed", animMovementSpeed, 0.05f, Time.deltaTime);
 
+    void handleAnimation()
+    {
+        // Vert ‚Üí magnitud de movimiento normalizada
+        float targetVert = isMoving ? Mathf.Clamp01(realMovementSpeed / walkMultiplier) : 0f;
+        vertValue = Mathf.Lerp(vertValue, targetVert, 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, vertDamp)));
+        animator.SetFloat(hash_Vert, vertValue);
+
+        // State fijo en 0 ‚Üí siempre walk
+        stateValue = Mathf.Lerp(stateValue, 0f, 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, stateDamp)));
+        animator.SetFloat(hash_State, stateValue);
+
+        animator.SetBool(hash_isGrounded, isGrounded);
+        animator.SetBool(hash_isFalling, isFalling);
+        animator.SetBool(hash_isMoving, isMoving);
     }
+
     public void OnEnable()
     {
         PlayerInputAction.PlayerBasicActions.Enable();
@@ -147,5 +138,4 @@ public class PlayerMovement : MonoBehaviour
     {
         PlayerInputAction.PlayerBasicActions.Disable();
     }
-
 }
