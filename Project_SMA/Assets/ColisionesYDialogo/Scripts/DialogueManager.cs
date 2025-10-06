@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
@@ -6,12 +7,25 @@ using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
+    [Header("UI Elements")]
     [SerializeField] private Button interacButton;
     [SerializeField] private GameObject textPanel;
     [SerializeField] private TextMeshProUGUI textLabel;
     [SerializeField] private TextMeshProUGUI textName;
-        
 
+    [Header("Audio Settings")]
+    [SerializeField, Range(0.8f, 1.2f)] private float minPitch = 0.95f;
+    [SerializeField, Range(0.8f, 1.2f)] private float maxPitch = 1.05f;
+    [SerializeField] private float minDuration = 0.5f;  // Mínimo tiempo de sonido
+
+    [Header("Fade Settings")]
+    [SerializeField, Tooltip("Duración del fundido de entrada en segundos (0 = sin fade).")]
+    private float fadeInTime = 0.1f;
+    [SerializeField, Tooltip("Duración del fundido de salida en segundos (0 = sin fade).")]
+    private float fadeOutTime = 0.2f;
+    private Coroutine fadeCoroutine;
+
+    private AudioSource audioSource;
     private List<string> dialogo = new List<string> ();
     private int index = -1;
     private bool inZone = false;
@@ -20,10 +34,15 @@ public class DialogueManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        if (textPanel)
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource != null)
         {
-            textPanel.SetActive (false);
+            audioSource.playOnAwake = false;
         }
+
+        if (textPanel)
+            textPanel.SetActive(false);
+
         if (interacButton)
         {
             interacButton.gameObject.SetActive(false);
@@ -41,7 +60,6 @@ public class DialogueManager : MonoBehaviour
             inZone = true;
             interacButton.gameObject.SetActive (true);
             textName.text = currentGata.elementName;
-
         }
     }
     private void OnTriggerExit(Collider other)
@@ -55,18 +73,15 @@ public class DialogueManager : MonoBehaviour
 
             textPanel.SetActive(false);
             interacButton.gameObject.SetActive (false);
-            textLabel.text = string.Empty; 
-           
+            textLabel.text = string.Empty;
         }
     }
 
     private void ShowNext()
     {
-        //  Fix: la guardia debe bloquear cuando NO estás en zona o no hay lista
         if (!inZone || dialogo == null || dialogo.Count == 0)
             return;
 
-        // Mostrar el panel en el primer click si aún estaba oculto
         if (textPanel && !textPanel.activeSelf)
             textPanel.SetActive(true);
 
@@ -74,13 +89,74 @@ public class DialogueManager : MonoBehaviour
 
         if (index < dialogo.Count)
         {
-            if (textLabel) textLabel.text = dialogo[index];
+            string currentLine = dialogo[index];
+            if (textLabel) textLabel.text = currentLine;
+            PlayDialogueSound(currentLine);
         }
         else
         {
-            // Fin del diálogo: ocultar UI
             if (textPanel) textPanel.SetActive(false);
             if (interacButton) interacButton.gameObject.SetActive(false);
+            interacButton.onClick.RemoveListener(ShowNext);
         }
+    }
+
+    private void PlayDialogueSound(string line)
+    {
+        if (currentGata.dialogueSound == null || audioSource == null) return;
+
+        // Ajuste de pitch aleatorio
+        audioSource.pitch = Random.Range(minPitch, maxPitch);
+        audioSource.clip = currentGata.dialogueSound;
+
+        // Duración calculada según longitud del texto
+        float duration = Mathf.Max(minDuration, line.Length * 0.02f);
+
+        // Si hay una corrutina previa de fade, la detenemos
+        if (fadeCoroutine != null)
+            StopCoroutine(fadeCoroutine);
+
+        fadeCoroutine = StartCoroutine(PlayWithFade(duration));
+    }
+
+    private IEnumerator PlayWithFade(float duration)
+    {
+        audioSource.volume = 0f;
+        audioSource.Play();
+
+        // Fade in
+        if (fadeInTime > 0f)
+        {
+            float timer = 0f;
+            while (timer < fadeInTime)
+            {
+                timer += Time.deltaTime;
+                audioSource.volume = Mathf.Lerp(0f, 1f, timer / fadeInTime);
+                yield return null;
+            }
+        }
+        else
+        {
+            audioSource.volume = 1f;
+        }
+
+        // Mantener volumen durante el tiempo restante (menos el fade out)
+        float holdTime = Mathf.Max(0f, duration - fadeOutTime);
+        yield return new WaitForSeconds(holdTime);
+
+        // Fade out
+        if (fadeOutTime > 0f)
+        {
+            float timer = 0f;
+            while (timer < fadeOutTime)
+            {
+                timer += Time.deltaTime;
+                audioSource.volume = Mathf.Lerp(1f, 0f, timer / fadeOutTime);
+                yield return null;
+            }
+        }
+
+        audioSource.Stop();
+        audioSource.volume = 1f;
     }
 }
