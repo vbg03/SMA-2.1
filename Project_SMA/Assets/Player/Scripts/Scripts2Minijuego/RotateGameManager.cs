@@ -36,6 +36,7 @@ public class RotateGameManager : MonoBehaviour
                 winText.SetActive(true);
                 botonVolver.SetActive(false);
                 botonContinuar.SetActive(true);
+                GameFlagManager.I.SetFlag("Minijuego2Terminado", true);
             }
             youWin = true;
         }

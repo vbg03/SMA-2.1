@@ -65,5 +65,6 @@ public class DragDropManager : MonoBehaviour
         botonContinuar.SetActive(true);
         botonVolver.SetActive(false);
         OnMinijuegoCompletado?.Invoke();
+        GameFlagManager.I.SetFlag("Minijuego1Terminado", true);
     }
 }

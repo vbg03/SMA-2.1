@@ -1,7 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,21 +15,23 @@ public class DialogueManager : MonoBehaviour
     [Header("Audio Settings")]
     [SerializeField, Range(0.8f, 1.2f)] private float minPitch = 0.95f;
     [SerializeField, Range(0.8f, 1.2f)] private float maxPitch = 1.05f;
-    [SerializeField] private float minDuration = 0.5f;  // M�nimo tiempo de sonido
+    [SerializeField] private float minDuration = 0.5f;  // Mínimo tiempo de sonido
 
     [Header("Fade Settings")]
-    [SerializeField, Tooltip("Duraci�n del fundido de entrada en segundos (0 = sin fade).")]
+    [SerializeField, Tooltip("Duración del fundido de entrada en segundos (0 = sin fade).")]
     private float fadeInTime = 0.1f;
-    [SerializeField, Tooltip("Duraci�n del fundido de salida en segundos (0 = sin fade).")]
+    [SerializeField, Tooltip("Duración del fundido de salida en segundos (0 = sin fade).")]
     private float fadeOutTime = 0.2f;
     private Coroutine fadeCoroutine;
-
+        
     private AudioSource audioSource;
     private List<string> dialogo = new List<string> ();
-    private int index = -1;
+    public int index = -1;
     private bool inZone = false;
     private DialogueGata currentGata;
-    
+    private DialogueChangeManager currentChange;
+    private GameObject currentTarget;
+    private bool rearming = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -46,44 +47,89 @@ public class DialogueManager : MonoBehaviour
         if (interacButton)
         {
             interacButton.gameObject.SetActive(false);
-            interacButton.onClick.AddListener(ShowNext);
         }
     }
+    private void ForceReevaluateCurrentTarget()
+    {
+        if (currentTarget == null || rearming) return;
+        StartCoroutine(RearmColliderCoroutine(currentTarget));
+    }
+    private System.Collections.IEnumerator RearmColliderCoroutine(GameObject target)
+{
+    rearming = true;
+
+    // Soporta 3D y 2D
+    var boxCol = target.GetComponent<BoxCollider>();
+    var SphCol = target.GetComponent<SphereCollider>();
+
+    // Apaga el collider un frame
+    if (boxCol) boxCol.enabled = false;
+    if (SphCol) SphCol.enabled = false;
+
+    // Espera un frame (o WaitForFixedUpdate si usas física)
+    yield return new WaitForSeconds(1f); // o: yield return new WaitForFixedUpdate();
+
+    // Vuelve a encenderlo
+    if (boxCol) boxCol.enabled = true;
+    if (SphCol) SphCol.enabled = true;
+
+    rearming = false;
+}
 
     private void OnTriggerEnter(Collider other)
     {
-        currentGata = other.GetComponent<DialogueGata>();
-        if (currentGata != null && currentGata.dialogos != null && currentGata.dialogos.Count > 0)
-        {
-            dialogo = currentGata.dialogos;
-            index = -1;
-            inZone = true;
-            interacButton.gameObject.SetActive (true);
-            textName.text = currentGata.elementName;
-        }
+        currentChange = other.GetComponent<DialogueChangeManager>();
+        // 1) Si el interactuable tiene un DialogueChangeManager, pídele el DialogueGata correcto
+        DialogueGata elegido = null;
+        var change = other.GetComponent<DialogueChangeManager>();
+        if (change != null)
+            elegido = change.GetCurrentDialogueAndAdvance();
+        else
+            // 2) Si no hay gestor, usa el DialogueGata directo del interactuable (tu flujo actual)
+            elegido = other.GetComponent<DialogueGata>();
+
+        // 3) Si no hay diálogo, no armamos UI
+        if (elegido == null || elegido.dialogos == null || elegido.dialogos.Count == 0)
+            return;
+
+        // 4) Cargamos el diálogo seleccionado como siempre
+        currentGata = elegido;
+        dialogo = currentGata.dialogos;
+        index = -1;
+        inZone = true;
+
+        if (interacButton) interacButton.gameObject.SetActive(true);
+        if (textName) textName.text = currentGata.elementName;
+
+        if (interacButton != null)
+            interacButton.onClick.RemoveAllListeners();
+            interacButton.onClick.AddListener(ShowNext);
     }
+
     private void OnTriggerExit(Collider other)
     {
+        // Salimos solo si estamos dejando el mismo objeto con el que estábamos dialogando
         if (currentGata != null && other.gameObject == currentGata.gameObject)
         {
             inZone = false;
             currentGata = null;
-            dialogo =  null;
+            dialogo = null;
             index = -1;
+            currentChange = null;
 
-            textPanel.SetActive(false);
-            interacButton.gameObject.SetActive (false);
-            textLabel.text = string.Empty;
+            if (textPanel) textPanel.SetActive(false);
+            if (interacButton) interacButton.gameObject.SetActive(false);
+            if (textLabel) textLabel.text = string.Empty;
+
+            if (interacButton != null) interacButton.onClick.RemoveListener(ShowNext);
         }
     }
 
     private void ShowNext()
     {
-        if (!inZone || dialogo == null || dialogo.Count == 0)
-            return;
+        if (!inZone || dialogo == null || dialogo.Count == 0) return;
 
-        if (textPanel && !textPanel.activeSelf)
-            textPanel.SetActive(true);
+        if (textPanel && !textPanel.activeSelf) textPanel.SetActive(true);
 
         index++;
 
@@ -95,9 +141,12 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
+            if (currentChange != null && currentGata != null) currentChange.OnDialogueFinished(currentGata);
             if (textPanel) textPanel.SetActive(false);
             if (interacButton) interacButton.gameObject.SetActive(false);
-            interacButton.onClick.RemoveListener(ShowNext);
+            dialogo = null;
+            index = -1;
+            ForceReevaluateCurrentTarget();
         }
     }
 
@@ -109,12 +158,11 @@ public class DialogueManager : MonoBehaviour
         audioSource.pitch = Random.Range(minPitch, maxPitch);
         audioSource.clip = currentGata.dialogueSound;
 
-        // Duraci�n calculada seg�n longitud del texto
+        // Duración calculada según longitud del texto
         float duration = Mathf.Max(minDuration, line.Length * 0.02f);
 
         // Si hay una corrutina previa de fade, la detenemos
-        if (fadeCoroutine != null)
-            StopCoroutine(fadeCoroutine);
+        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
 
         fadeCoroutine = StartCoroutine(PlayWithFade(duration));
     }

@@ -1,7 +1,5 @@
-using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEditor;
 
 public class DialogueGata : MonoBehaviour
 {
