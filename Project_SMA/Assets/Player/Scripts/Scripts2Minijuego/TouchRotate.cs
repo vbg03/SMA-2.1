@@ -6,9 +6,15 @@ public class TouchRotate : MonoBehaviour
     private void OnMouseDown()
     {
         //!GameControl.youWin
-        if (!false)
+        if (!RotateGameManager.youWin)
         {
-            transform.Rotate(0f,0f, 90f);
+            RotateFigure();
         }
     }
+
+    public void RotateFigure() 
+    {
+        if (!RotateGameManager.youWin) transform.Rotate(0f, 0f, 90f);
+    }
+
 }
