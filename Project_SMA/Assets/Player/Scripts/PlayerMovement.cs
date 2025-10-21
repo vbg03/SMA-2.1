@@ -11,6 +11,15 @@ public class PlayerMovement : MonoBehaviour
     public Animator animator;
     public LayerMask whatIsGround;
 
+    [Header("Audio")]
+    public AudioSource footstepsAudioSource;
+    public AudioSource meowAudioSource;
+    public AudioClip footstepsClip;
+    public AudioClip[] meowClips;
+    public float minMeowInterval = 5f;
+    public float maxMeowInterval = 15f;
+    private float nextMeowTime;
+
     [Header("Estados del personaje")]
     public bool isFalling = false;
     public bool isMoving = false;
@@ -54,6 +63,9 @@ public class PlayerMovement : MonoBehaviour
         PlayerInputAction.PlayerBasicActions.Move.canceled  += onMovementInput;
 
         if (animator) animator.applyRootMotion = false;
+
+        // Inicializar tiempo del primer maullido
+        nextMeowTime = Time.time + Random.Range(minMeowInterval, maxMeowInterval);
     }
 
     void Update()
@@ -62,6 +74,7 @@ public class PlayerMovement : MonoBehaviour
         handleMovement();
         handleGravity();
         handleAnimation();
+        handleAudio();
     }
 
     void onMovementInput(InputAction.CallbackContext context)
@@ -128,6 +141,38 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool(hash_isGrounded, isGrounded);
         animator.SetBool(hash_isFalling, isFalling);
         animator.SetBool(hash_isMoving, isMoving);
+    }
+
+    void handleAudio()
+    {
+        // Sonido de pasos en loop
+        if (isMoving && isGrounded)
+        {
+            if (footstepsAudioSource != null && footstepsClip != null && !footstepsAudioSource.isPlaying)
+            {
+                footstepsAudioSource.clip = footstepsClip;
+                footstepsAudioSource.loop = true;
+                footstepsAudioSource.Play();
+            }
+        }
+        else
+        {
+            if (footstepsAudioSource != null && footstepsAudioSource.isPlaying)
+            {
+                footstepsAudioSource.Stop();
+            }
+        }
+
+        // Maullidos aleatorios
+        if (Time.time >= nextMeowTime && meowAudioSource != null && meowClips != null && meowClips.Length > 0)
+        {
+            // Seleccionar un clip aleatorio de maullido
+            AudioClip randomMeow = meowClips[Random.Range(0, meowClips.Length)];
+            meowAudioSource.PlayOneShot(randomMeow);
+
+            // Programar el próximo maullido
+            nextMeowTime = Time.time + Random.Range(minMeowInterval, maxMeowInterval);
+        }
     }
 
     public void OnEnable()
