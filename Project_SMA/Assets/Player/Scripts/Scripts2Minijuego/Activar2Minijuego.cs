@@ -6,6 +6,7 @@ public class Activar2Minijuego : MonoBehaviour
 {
     [Header("Referencias")]
     public GameObject panelMinijuego2;           // El panel del minijuego
+    public GameObject signoInteraccion;           // El signo interaccion
     public GameObject panelPlayerUI;           // El panel de los botones del jugador
     public RotateGameManager rotateGameManager;      // Script que maneja el minijuego
     public Button botonInteractuar;              // Botón en la UI para interactuar
@@ -37,6 +38,7 @@ public class Activar2Minijuego : MonoBehaviour
             {
                 botonInteractuar.gameObject.SetActive(true);
                 botonInteractuar.onClick.AddListener(MostrarMinijuego);
+                signoInteraccion.SetActive(true);
             }
         }
     }
@@ -48,6 +50,7 @@ public class Activar2Minijuego : MonoBehaviour
             botonInteractuar.onClick.RemoveListener(MostrarMinijuego);
             botonInteractuar.gameObject.SetActive(false);
             panelPlayerUI.SetActive(true);
+            signoInteraccion.SetActive(false);
 
         }
     }
@@ -68,7 +71,7 @@ public class Activar2Minijuego : MonoBehaviour
         botonInteractuar.onClick.RemoveListener(MostrarMinijuego);
         botonInteractuar.gameObject.SetActive(false);
         panelPlayerUI.SetActive(false);
-
+        signoInteraccion.SetActive(false);
         Debug.Log(" El minijuego ya terminó, botón desactivado permanentemente.");
     }
 }

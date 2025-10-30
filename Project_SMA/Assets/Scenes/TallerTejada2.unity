@@ -597,8 +597,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.19311081, y: 0.30187696, z: 0.06633047}
-  m_Center: {x: -0.004788791, y: 0.063624725, z: 0.04952282}
+  m_Size: {x: 0.19311081, y: 0.30187696, z: 0.09813279}
+  m_Center: {x: -0.004788791, y: 0.063624725, z: 0.06542398}
 --- !u!114 &109922555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,6 +612,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelMinijuego1: {fileID: 1713039196}
+  signoInteraccion: {fileID: 345988490}
   panelPlayerUI: {fileID: 6860345518886597237}
   dragDropManager: {fileID: 1713039198}
   botonInteractuar: {fileID: 6860345518886597236}
@@ -1721,6 +1722,93 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!1 &345988490
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 345988491}
+  - component: {fileID: 345988492}
+  m_Layer: 0
+  m_Name: signo-interaccion_0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &345988491
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345988490}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.73, y: 3.028, z: 0.1313}
+  m_LocalScale: {x: 0.09222734, y: 0.09222734, z: 0.09222734}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1160732688}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &345988492
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345988490}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: -1404288346, guid: 54e29ed3f7862a84ab24c0c216e87c44, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 3.08, y: 9.55}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1001 &379114320
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2249,6 +2337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelMinijuego1: {fileID: 1713039196}
+  signoInteraccion: {fileID: 0}
   panelPlayerUI: {fileID: 6860345518886597237}
   dragDropManager: {fileID: 1713039198}
   botonInteractuar: {fileID: 6860345518886597236}
@@ -3548,6 +3637,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelMinijuego2: {fileID: 722131806}
+  signoInteraccion: {fileID: 0}
   panelPlayerUI: {fileID: 6860345518886597237}
   rotateGameManager: {fileID: 722131808}
   botonInteractuar: {fileID: 6860345518886597236}
@@ -5988,6 +6078,7 @@ Transform:
   - {fileID: 1389408736}
   - {fileID: 294169364}
   - {fileID: 91324727}
+  - {fileID: 345988491}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1161516402
@@ -7194,7 +7285,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1361946244
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8044,6 +8135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelMinijuego2: {fileID: 722131806}
+  signoInteraccion: {fileID: 0}
   panelPlayerUI: {fileID: 6860345518886597237}
   rotateGameManager: {fileID: 722131808}
   botonInteractuar: {fileID: 6860345518886597236}
