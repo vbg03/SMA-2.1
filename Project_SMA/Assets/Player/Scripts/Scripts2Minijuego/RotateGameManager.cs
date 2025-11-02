@@ -7,12 +7,16 @@ public class RotateGameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public GameObject botonVolver;
     public GameObject botonContinuar;
-
+    public GameObject PanelMinijuego;
+    public GameObject PanelLogro;
+    public GameObject TextoInstrucciones;
     [SerializeField]
     private Transform [] imagenes;
     //TextMeshProUGUI
     [SerializeField] 
     private GameObject winText;
+    public AudioSource audioSource;   // Donde se reproduce el sonido
+    public AudioClip sonidoLogro;     // El sonido de sonidoFigureRotate
 
     public static bool youWin;
 
@@ -36,7 +40,11 @@ public class RotateGameManager : MonoBehaviour
                 winText.SetActive(true);
                 botonVolver.SetActive(false);
                 botonContinuar.SetActive(true);
+                audioSource.PlayOneShot(sonidoLogro);
                 GameFlagManager.I.SetFlag("Minijuego2Terminado", true);
+                PanelMinijuego.SetActive(false);
+                PanelLogro.SetActive(true);
+                TextoInstrucciones.SetActive(false);
             }
             youWin = true;
         }
