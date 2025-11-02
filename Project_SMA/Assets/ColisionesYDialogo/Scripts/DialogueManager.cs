@@ -32,7 +32,20 @@ public class DialogueManager : MonoBehaviour
     private DialogueChangeManager currentChange;
     private GameObject currentTarget;
     private bool rearming = false;
+
+    //private ProgressManager progressManager;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    void Start()
+    {
+        //progressManager = FindFirstObjectByType<ProgressManager>();
+        //if (progressManager != null)
+        //{
+        //    progressManager.RegisterTask(this);
+        //}
+    }
+
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
@@ -141,9 +154,15 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            if (currentChange != null && currentGata != null) currentChange.OnDialogueFinished(currentGata);
+            if (currentChange != null && currentGata != null) 
+            {
+                currentGata.progressManager?.NotifyTaskCompleted(currentGata);
+                currentChange.OnDialogueFinished(currentGata); 
+            }
             if (textPanel) textPanel.SetActive(false);
             if (interacButton) interacButton.gameObject.SetActive(false);
+            //progressManager?.NotifyTaskCompleted(this);
+
             dialogo = null;
             index = -1;
             ForceReevaluateCurrentTarget();

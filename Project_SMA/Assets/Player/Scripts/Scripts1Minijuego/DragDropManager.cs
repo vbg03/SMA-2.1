@@ -15,6 +15,8 @@ public class DragDropManager : MonoBehaviour
     public AudioClip sonidoFigureRotate;     // El sonido de sonidoFigureRotate
     public AudioClip sonidoLogro;     // El sonido de sonidoFigureRotate
 
+    private ProgressManager progressManager;
+
     [Header("UI")]
     public TextMeshProUGUI textoFiguras; // Asigna el objeto TMP desde el Canvas en el inspector
 
@@ -39,7 +41,14 @@ public class DragDropManager : MonoBehaviour
     void Start()
     {
         // Inicializar el texto
+
         ActualizarTexto();
+        progressManager = FindFirstObjectByType<ProgressManager>();
+        if (progressManager != null)
+        {
+            progressManager.RegisterTask(this);
+        }
+
     }
 
     private void FiguraBloqueadaHandler()
@@ -49,7 +58,7 @@ public class DragDropManager : MonoBehaviour
 
         if (figurasBloqueadas >= totalFiguras)
         {
-            NivelCompletado();
+            Nivel1Completado();
         }
     }
 
@@ -77,10 +86,14 @@ public class DragDropManager : MonoBehaviour
 
         }
     }
-    private void NivelCompletado()
+    private void Nivel1Completado()
     {
         //Debug.Log("¡Nivel Completado!");
         completado = true;
+        if (progressManager != null)
+        {
+            progressManager.NotifyTaskCompleted(this);
+        }
         botonContinuar.SetActive(true);
         botonVolver.SetActive(false);
         OnMinijuegoCompletado?.Invoke();

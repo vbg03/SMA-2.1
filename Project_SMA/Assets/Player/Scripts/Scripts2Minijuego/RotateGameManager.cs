@@ -20,6 +20,9 @@ public class RotateGameManager : MonoBehaviour
 
     public static bool youWin;
 
+    private ProgressManager progressManager;
+
+
     // Evento estático para notificar que el minijuego terminó
     public static event Action OnMinijuego2Completado;
 
@@ -27,6 +30,11 @@ public class RotateGameManager : MonoBehaviour
     {
         winText.SetActive(false);
         youWin = false;
+        progressManager = FindFirstObjectByType<ProgressManager>();
+        if (progressManager != null)
+        {
+            progressManager.RegisterTask(this);
+        }
     }
 
     // Update is called once per frame
@@ -34,19 +42,26 @@ public class RotateGameManager : MonoBehaviour
     {
         if(imagenes[0].rotation.z == 0 && imagenes[1].rotation.z == 0 && imagenes[2].rotation.z == 0 && imagenes[3].rotation.z == 0 && imagenes[4].rotation.z == 0 && imagenes[5].rotation.z == 0)
         {
-            if (youWin ==false)
-            {
-                OnMinijuego2Completado?.Invoke();
-                winText.SetActive(true);
-                botonVolver.SetActive(false);
-                botonContinuar.SetActive(true);
-                audioSource.PlayOneShot(sonidoLogro);
-                GameFlagManager.I.SetFlag("Minijuego2Terminado", true);
-                PanelMinijuego.SetActive(false);
-                PanelLogro.SetActive(true);
-                TextoInstrucciones.SetActive(false);
-            }
-            youWin = true;
+            if (youWin == false) Nivel2Completado();
         }
+    }
+
+    public void Nivel2Completado()
+    {
+        if (progressManager != null)
+        {
+            progressManager.NotifyTaskCompleted(this);
+        }
+        OnMinijuego2Completado?.Invoke();
+            winText.SetActive(true);
+            botonVolver.SetActive(false);
+            botonContinuar.SetActive(true);
+            audioSource.PlayOneShot(sonidoLogro);
+            GameFlagManager.I.SetFlag("Minijuego2Terminado", true);
+            PanelMinijuego.SetActive(false);
+            PanelLogro.SetActive(true);
+            TextoInstrucciones.SetActive(false);
+        
+        youWin = true;
     }
 }
