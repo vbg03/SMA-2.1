@@ -162,7 +162,7 @@ public class DialogueManager : MonoBehaviour
             if (textPanel) textPanel.SetActive(false);
             if (interacButton) interacButton.gameObject.SetActive(false);
             //progressManager?.NotifyTaskCompleted(this);
-
+            currentGata.dialogos.Clear();
             dialogo = null;
             index = -1;
             ForceReevaluateCurrentTarget();
