@@ -18,6 +18,7 @@ public class RotateGameManager : MonoBehaviour
     public AudioSource audioSource;   // Donde se reproduce el sonido
     public AudioClip sonidoLogro;     // El sonido de sonidoFigureRotate
 
+    public GameObject MedallaPerfil;
     public static bool youWin;
 
     private ProgressManager progressManager;
@@ -61,7 +62,7 @@ public class RotateGameManager : MonoBehaviour
             PanelMinijuego.SetActive(false);
             PanelLogro.SetActive(true);
             TextoInstrucciones.SetActive(false);
-        
+        MedallaPerfil.SetActive(true);
         youWin = true;
     }
 }

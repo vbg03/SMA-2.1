@@ -17,6 +17,8 @@ public class DragDropManager : MonoBehaviour
 
     private ProgressManager progressManager;
 
+    public GameObject MedallaPerfil;
+
     [Header("UI")]
     public TextMeshProUGUI textoFiguras; // Asigna el objeto TMP desde el Canvas en el inspector
 
@@ -98,5 +100,7 @@ public class DragDropManager : MonoBehaviour
         botonVolver.SetActive(false);
         OnMinijuegoCompletado?.Invoke();
         GameFlagManager.I.SetFlag("Minijuego1Terminado", true);
+        MedallaPerfil.SetActive(true);
+
     }
 }
