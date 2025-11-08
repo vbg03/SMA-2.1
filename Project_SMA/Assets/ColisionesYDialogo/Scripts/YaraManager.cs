@@ -4,6 +4,7 @@ public class YaraManager : MonoBehaviour
 {
     public GameObject yaraPrefab;
     public Transform spawnPoint;
+    public MeshRenderer cuadro;
 
     bool prevMinijuego2Terminado = false;
     bool prevNota = false;
@@ -70,5 +71,6 @@ public class YaraManager : MonoBehaviour
     void ApplyNota(bool isTrue)
     {
         Destroy(yara);
+        cuadro.enabled = isTrue;
     }
 }

@@ -989,9 +989,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: Yara
   dialogos:
+  - "T\xFA\u2026 nacido del arte y del r\xEDo, est\xE1s destinado a buscar."
   - El amor no se atrapa, se sigue. Fluye y se transforma.
   - Sigue buscando que tu destino cada vez suena mejor.
   dialogueSound: {fileID: 8300000, guid: 9d94ad52b0c668142bd52819fee71f25, type: 3}
+  progressManager: {fileID: 0}
 --- !u!114 &-2584093664297410584
 MonoBehaviour:
   m_ObjectHideFlags: 0

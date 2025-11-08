@@ -4,6 +4,8 @@ using System;
 
 public class RotateGameManager : MonoBehaviour
 {
+    private MinigameProgressReporter _reporter;
+    private bool _winReportSent = false; // ADD
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public GameObject botonVolver;
     public GameObject botonContinuar;
@@ -29,9 +31,11 @@ public class RotateGameManager : MonoBehaviour
 
     void Start()
     {
+        _reporter = GetComponent<MinigameProgressReporter>();
         winText.SetActive(false);
         youWin = false;
         progressManager = FindFirstObjectByType<ProgressManager>();
+        Debug.Log(progressManager.ToString());
         if (progressManager != null)
         {
             progressManager.RegisterTask(this);
@@ -49,10 +53,18 @@ public class RotateGameManager : MonoBehaviour
 
     public void Nivel2Completado()
     {
+        if (!_winReportSent)
+        {
+            _winReportSent = true;
+            if (_reporter != null) _reporter.ReportWin();
+            else Debug.LogWarning("No hay MinigameProgressReporter en RotateGameManager.");
+        }
         if (progressManager != null)
         {
             progressManager.NotifyTaskCompleted(this);
+            Debug.Log("Notificó");
         }
+
         OnMinijuego2Completado?.Invoke();
             winText.SetActive(true);
             botonVolver.SetActive(false);

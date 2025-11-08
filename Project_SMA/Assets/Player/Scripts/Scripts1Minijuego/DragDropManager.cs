@@ -5,6 +5,9 @@ using UnityEngine.Audio;
 
 public class DragDropManager : MonoBehaviour
 {
+    private MinigameProgressReporter _reporter;
+    private bool _winReportSent = false;
+
     public GameObject botonVolver;
     public GameObject botonContinuar;
     public GameObject PanelMinijuego;
@@ -42,6 +45,7 @@ public class DragDropManager : MonoBehaviour
 
     void Start()
     {
+        _reporter = GetComponent<MinigameProgressReporter>();
         // Inicializar el texto
 
         ActualizarTexto();
@@ -91,7 +95,16 @@ public class DragDropManager : MonoBehaviour
     private void Nivel1Completado()
     {
         //Debug.Log("¡Nivel Completado!");
+        if (completado) return;
         completado = true;
+
+        if (!_winReportSent)
+        {
+            _winReportSent = true;
+            if (_reporter != null) _reporter.ReportWin();           // <-- ESTA ES LA CLAVE
+            else Debug.LogWarning("No hay MinigameProgressReporter en DragDropManager.");
+        }
+
         if (progressManager != null)
         {
             progressManager.NotifyTaskCompleted(this);

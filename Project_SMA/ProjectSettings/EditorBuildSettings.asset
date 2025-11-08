@@ -9,8 +9,19 @@ EditorBuildSettings:
     path: Assets/Scenes/MenuPrincipal.unity
     guid: 6fc7258ee87944f44a6fc9c053c188b7
   - enabled: 1
+    path: Assets/Scenes/Perfil.unity
+    guid: 4c07a9dd6d6834046a010a01d58dba78
+  - enabled: 1
+    path: Assets/Scenes/Niveles.unity
+    guid: 94bf46cb7648484408fd7a1f03bb16c5
+  - enabled: 1
+    path: Assets/Scenes/Contexto.unity
+    guid: e6bfb9c654fa09047a0e3a30b6122531
+  - enabled: 1
     path: Assets/Scenes/TallerTejada2.unity
     guid: 5d22e48678751114baa88e1046febdf0
-  m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  - enabled: 1
+    path: Assets/Scenes/ContextoRio.unity
+    guid: 6d7affa5f3594f149a940e844fb8f04e
+  m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

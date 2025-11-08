@@ -34,6 +34,7 @@ public class ProgressManager : MonoBehaviour
         //if (registeredTasks.Add(task))
         //{
             totalTasks++;
+        Debug.Log(totalTasks - completedTasks);
             UpdateProgress();
         //}
     }
@@ -46,6 +47,7 @@ public class ProgressManager : MonoBehaviour
         //if (registeredTasks.Contains(task))
         //{
             completedTasks++;
+        Debug.Log(totalTasks-completedTasks);
             UpdateProgress();
 
             if (completedTasks >= totalTasks)
