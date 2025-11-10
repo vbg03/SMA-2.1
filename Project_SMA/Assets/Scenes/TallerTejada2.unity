@@ -1202,8 +1202,8 @@ Transform:
   m_GameObject: {fileID: 240076439}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.7835, y: -0.162, z: -5.5472}
-  m_LocalScale: {x: 14.048809, y: 0.32297, z: 12.69468}
+  m_LocalPosition: {x: -14.7835, y: -0.25, z: -5.5472}
+  m_LocalScale: {x: 14.048809, y: 0.4, z: 12.69468}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1218097840}
@@ -5484,6 +5484,8 @@ MonoBehaviour:
     condiciones:
     - tipo: 1
       clave: Nota
+    - tipo: 1
+      clave: Inscripcion
     soloUnaVez: 0
     usado: 0
     flagActivar: Puerta
@@ -6831,8 +6833,8 @@ Transform:
   m_GameObject: {fileID: 869937318}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -22.285, y: -0.168, z: -5.67}
-  m_LocalScale: {x: 1.6607648, y: 0.32297, z: 1.5552702}
+  m_LocalPosition: {x: -22.285, y: -0.25599998, z: -5.67}
+  m_LocalScale: {x: 1.6607648, y: 0.4, z: 1.5552702}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1218097840}
@@ -7445,7 +7447,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 4, y: -17}
+  m_AnchoredPosition: {x: 4, y: -17.000244}
   m_SizeDelta: {x: -1161.6516, y: -646.2235}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &944110346
@@ -8762,8 +8764,8 @@ Transform:
   m_GameObject: {fileID: 1048618040}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.96, y: -0.162, z: -5.5472}
-  m_LocalScale: {x: 11.932496, y: 0.32297, z: 2.2173798}
+  m_LocalPosition: {x: -5.96, y: -0.25, z: -5.5472}
+  m_LocalScale: {x: 11.932496, y: 0.4, z: 2.2173798}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1218097840}
@@ -19529,6 +19531,26 @@ PrefabInstance:
     - target: {fileID: 467868049071917801, guid: 45c4f20765163b946af2fc3da13ca728, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1791042307020225673, guid: 45c4f20765163b946af2fc3da13ca728, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.3467494
+      objectReference: {fileID: 0}
+    - target: {fileID: 1791042307020225673, guid: 45c4f20765163b946af2fc3da13ca728, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.3467494
+      objectReference: {fileID: 0}
+    - target: {fileID: 1791042307020225673, guid: 45c4f20765163b946af2fc3da13ca728, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.3467494
+      objectReference: {fileID: 0}
+    - target: {fileID: 1791042307020225673, guid: 45c4f20765163b946af2fc3da13ca728, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 214
+      objectReference: {fileID: 0}
+    - target: {fileID: 1791042307020225673, guid: 45c4f20765163b946af2fc3da13ca728, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 228
       objectReference: {fileID: 0}
     - target: {fileID: 3941135550073335452, guid: 45c4f20765163b946af2fc3da13ca728, type: 3}
       propertyPath: sonidoFigureRotate
